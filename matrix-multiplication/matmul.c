@@ -1,3 +1,5 @@
+#define _POSIX_C_SOURCE 199309L
+
 #include<stdio.h>
 #include<stdlib.h>
 #include <time.h>
@@ -11,7 +13,6 @@ typedef struct Matrix {
 
 void get_matrix(Matrix * mat, int r, int c )
 {
-    srand(time(0));
 	for (int i = 0; i < r; i++) 
     {
 		for (int j = 0; j < c; j++) 
@@ -58,11 +59,11 @@ void print_matrix(Matrix * R, int r, int c )
 {
 	for (int i = 0; i < r; i++) 
     {
-        printf("\n");
 		for (int j = 0; j < c; j++) 
         {
             printf("%d ",R->matrix[i][j]);
 		}
+        printf("\n");
 	}
 }
 
@@ -160,6 +161,9 @@ Matrix * matrix_chain_multiplication(int si,int ei,int n,Matrix *restrict all_ma
 
 int main()
 {
+    struct timespec start, end, mid1,mid2;
+    clock_gettime(CLOCK_MONOTONIC, &start);
+
     int n;
     scanf("%d",&n);
 
@@ -176,36 +180,27 @@ int main()
         all_matrix[i-1] = malloc(sizeof(Matrix));
         get_matrix(all_matrix[i-1],r,c);
     }
+    clock_gettime(CLOCK_MONOTONIC, &mid1);
+    double time_taken1 = (mid1.tv_sec - start.tv_sec) + 1e-9*(mid1.tv_nsec - start.tv_nsec);
+    printf("Time taken by the matrix-chain-multiplication 'mid1' : %lf\n",time_taken1);
 
-    // print_all_matrix(all_matrix,D,n);
 
     long long int m[n+1][n+1];
     long long int s[n+1][n+1];
     make_sm(n,s,m, D);
+    clock_gettime(CLOCK_MONOTONIC, &mid2);
+    double time_taken2 = (mid2.tv_sec - mid1.tv_sec) + 1e-9*(mid2.tv_nsec - mid1.tv_nsec);
+    printf("Time taken by the matrix-chain-multiplication 'mid2' : %lf\n",time_taken2);
 
-
-    // printf("\nm array : \n");
-    // for(int i=0;i<n+1;i++)
-    // {
-    //     for(int j=0;j<n+1;j++)
-    //     {
-    //         printf("%lld ",m[i][j]);
-    //     }
-    //     printf("\n");
-    // }
-
-    // printf("\ns array : \n");
-    // for(int i=0;i<n+1;i++)
-    // {
-    //     for(int j=0;j<n+1;j++)
-    //     {
-    //         printf("%lld ",s[i][j]);
-    //     }
-    //     printf("\n");
-    // }
 
     Matrix * answer = matrix_chain_multiplication(1,n,n,all_matrix,D,s);
     // print_matrix(answer,D[0],D[n]);
+    clock_gettime(CLOCK_MONOTONIC, &end);
+    double time_taken3 = (end.tv_sec - mid2.tv_sec) + 1e-9*(end.tv_nsec - mid2.tv_nsec);
+    printf("Time taken by the matrix-chain-multiplication : %lf\n",time_taken3);
+
+    printf("Total time : %lf\n",time_taken1+time_taken2+time_taken3);
+    
 
     return 0;
 }
