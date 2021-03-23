@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include <time.h>
 
 #define DEFAULT_ROW 1001
 #define DEFAULT_COLUMN 1001
@@ -10,6 +11,7 @@ typedef struct Matrix {
 
 void get_matrix(Matrix * mat, int r, int c )
 {
+    srand(time(0));
 	for (int i = 0; i < r; i++) 
     {
 		for (int j = 0; j < c; j++) 
@@ -78,18 +80,8 @@ void print_all_matrix(Matrix *restrict all_matrix[],int D[],int n)
 Matrix * multiply_matrix(Matrix * a, Matrix * b,int p,int q, int r)
 {    Matrix *result;
     result=malloc(sizeof(Matrix));
-    /*
-    size of matrix a is pxq
-    size of matrix b is qxr
-    Maximum value of p,q or r can be 1000.
-    Your Code goes here. The output of their matrix multiplication
-    should be stored in result and returned. Just code this function,
-    no need to write anything in main(). This function will be called directly.
-    We are dealing with pointers so use result->matrix and not result.matrix
-    Also note you can write any other function that you might need.
-    */
 
-#define N 1000
+    #define N 1000
 
     int stridei = 20, stridek = 512, stridej = 20, i, j, k, gotill;
     register int *arow;
@@ -102,7 +94,7 @@ Matrix * multiply_matrix(Matrix * a, Matrix * b,int p,int q, int r)
         }
     }
 
-#define min(x, y) (y^((x^y) & -(x<y)))
+    #define min(x, y) (y^((x^y) & -(x<y)))
 
     for(i = 0; i < N; i++){
         for(j = 0; j < i; j++){
@@ -213,7 +205,7 @@ int main()
     // }
 
     Matrix * answer = matrix_chain_multiplication(1,n,n,all_matrix,D,s);
-    print_matrix(answer,D[0],D[n]);
+    // print_matrix(answer,D[0],D[n]);
 
     return 0;
 }
