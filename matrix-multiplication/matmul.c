@@ -6,7 +6,7 @@ typedef struct Matrix {
 } Matrix;
 
 
-void get_matrix(Matrix * R, int r, int c )
+void get_matrix(Matrix * mat, int r, int c )
 {
 	for (int i = 0; i < r; i++) 
     {
@@ -14,9 +14,40 @@ void get_matrix(Matrix * R, int r, int c )
         {
             int x;
             scanf("%d",&x);
-            R->matrix[i][j] = x;
+            mat->matrix[i][j] = x;
 		}
 	}
+}
+
+void make_sm(int n,long long int s[n+1][n+1],long long int m[n+1][n+1], int D[n+1])
+{
+    for(int i=0;i<n+1;i++)
+    {
+        for(int j=0;j<n+1;j++)
+        {
+            m[i][j]=0;
+            s[i][j]=0;
+        }
+    }
+
+    for(int d=1;d<n;d++)
+    {
+        for (int i=1;i<n-d+1;i++)
+        {
+            int j = i+d;
+            long long int min = 1000000000000000;
+            for(int k=i;k<=j-1;k++)
+            {
+                long long int temp = m[i][k] + m[k+1][j] + D[i-1]*D[k]*D[j];
+                if (min > temp)
+                {
+                    min = temp;
+                    s[i][j] = k;
+                }
+            }
+            m[i][j] = min;
+        }
+    }
 }
 
 void print_matrix(Matrix * R, int r, int c )
@@ -60,6 +91,35 @@ int main()
         all_matrix[i-1] = malloc(sizeof(Matrix));
         get_matrix(all_matrix[i-1],r,c);
     }
-    print_all_matrix(all_matrix,D,n);    
+
+    // print_all_matrix(all_matrix,D,n);
+
+    long long int m[n+1][n+1];
+    long long int s[n+1][n+1];
+    make_sm(n,s,m, D);
+
+
+    // printf("\nm array : \n");
+    // for(int i=0;i<n+1;i++)
+    // {
+    //     for(int j=0;j<n+1;j++)
+    //     {
+    //         printf("%lld ",m[i][j]);
+    //     }
+    //     printf("\n");
+    // }
+
+    // printf("\ns array : \n");
+    // for(int i=0;i<n+1;i++)
+    // {
+    //     for(int j=0;j<n+1;j++)
+    //     {
+    //         printf("%lld ",s[i][j]);
+    //     }
+    //     printf("\n");
+    // }
+
+    
+
     return 0;
 }
