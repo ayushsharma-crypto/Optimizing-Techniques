@@ -160,7 +160,7 @@ Matrix * matrix_chain_multiplication(int si,int ei,int n,Matrix *restrict all_ma
 
     int pi = s[si][ei];
 
-    Matrix * ret =  multiply_matrix_v1(matrix_chain_multiplication(si,pi,n,all_matrix,D,s),matrix_chain_multiplication(pi+1,ei,n,all_matrix,D,s),ret_matrix_row,D[si],ret_matrix_col);
+    Matrix * ret =  multiply_matrix_v2(matrix_chain_multiplication(si,pi,n,all_matrix,D,s),matrix_chain_multiplication(pi+1,ei,n,all_matrix,D,s),ret_matrix_row,D[si],ret_matrix_col);
 
     struct timespec et;
     clock_gettime(CLOCK_MONOTONIC, &et);
