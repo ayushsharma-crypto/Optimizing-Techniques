@@ -21,6 +21,7 @@ Matrix * matrix_chain_multiplication(int si,int ei,int n,Matrix *restrict all_ma
 Matrix * multiply_matrix_v1(Matrix * a, Matrix * b,int p,int q, int r);
 Matrix * multiply_matrix_v2(Matrix * a, Matrix * b,int p,int q, int r);
 Matrix * multiply_matrix_v3(Matrix * a, Matrix * b,int p,int q, int r);
+Matrix * multiply_matrix_v4(Matrix * a, Matrix * b,int p,int q, int r);
 
 
 int main()
@@ -68,7 +69,7 @@ int main()
     clock_gettime(CLOCK_MONOTONIC, &end);
     double time_taken3 = (end.tv_sec - mid2.tv_sec) + 1e-9*(end.tv_nsec - mid2.tv_nsec);
     // printf("Time taken by the matrix-chain-multiplication: %lf\n",time_taken3);
-    // printf("Total time: %lf\n",time_taken1+time_taken2+time_taken3);
+    printf("Total time: %lf\n",time_taken1+time_taken2+time_taken3);
     
 
     return 0;
@@ -77,6 +78,13 @@ int main()
 
 void get_matrix(Matrix * mat, int r, int c )
 {
+	for (int i = 0; i < DEFAULT_ROW; i++) 
+    {
+		for (int j = 0; j < DEFAULT_COLUMN; j++) 
+        {
+            mat->matrix[i][j] = 0;
+		}
+	}
 	for (int i = 0; i < r; i++) 
     {
 		for (int j = 0; j < c; j++) 
@@ -160,7 +168,7 @@ Matrix * matrix_chain_multiplication(int si,int ei,int n,Matrix *restrict all_ma
 
     int pi = s[si][ei];
 
-    Matrix * ret =  multiply_matrix_v2(matrix_chain_multiplication(si,pi,n,all_matrix,D,s),matrix_chain_multiplication(pi+1,ei,n,all_matrix,D,s),ret_matrix_row,D[si],ret_matrix_col);
+    Matrix * ret =  multiply_matrix_v4(matrix_chain_multiplication(si,pi,n,all_matrix,D,s),matrix_chain_multiplication(pi+1,ei,n,all_matrix,D,s),ret_matrix_row,D[si],ret_matrix_col);
 
     struct timespec et;
     clock_gettime(CLOCK_MONOTONIC, &et);
@@ -237,8 +245,41 @@ Matrix * multiply_matrix_v2(Matrix * a, Matrix * b,int p,int q, int r)
     return result;
 }
 
-
 Matrix * multiply_matrix_v3(Matrix * a, Matrix * b,int p,int q, int r)
+{    
+
+    struct timespec st;
+    clock_gettime(CLOCK_MONOTONIC, &st);
+
+    Matrix *result;
+    result=malloc(sizeof(Matrix));
+
+    for (int i = 0; i < p; i++)	
+    {
+        for (int j = 0; j < r; j++) 
+            result->matrix[i][j] =0;
+    }
+
+ 
+    for (int i = 0; i < p; i++)	
+    {
+        for(int j = 0; j < r; j++) 
+        {
+            register long long int temp = 0;
+            for  (int k = 0; k < q; k++) 
+                temp += (a->matrix[i][k] * b->matrix[k][j]);
+            result->matrix[i][j] = temp;
+        }
+    }
+    struct timespec et;
+    clock_gettime(CLOCK_MONOTONIC, &et);
+
+    double time_taken = (et.tv_sec - st.tv_sec) + 1e-9*(et.tv_nsec - st.tv_nsec);
+    // printf("Time taken by the matrix-multiplication: %lf, p= %d,q= %d,r= %d\n",time_taken,p,q,r);
+    return result;
+}
+
+Matrix * multiply_matrix_v4(Matrix * a, Matrix * b,int p,int q, int r)
 {    
 
     struct timespec st;
@@ -250,9 +291,9 @@ Matrix * multiply_matrix_v3(Matrix * a, Matrix * b,int p,int q, int r)
     #define N 1000
 
     int stridei = 20, stridek = 512, stridej = 20, i, j, k, gotill;
-    register int *arow;
-    register int *brow;
-    register int ii, jj, kk, tmp;
+    register long long int *arow;
+    register long long int *brow;
+    register long long int ii, jj, kk, tmp;
 
     for(ii = 0; ii < p; ii++){
         for(jj = 0; jj < r; jj++){
