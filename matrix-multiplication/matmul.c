@@ -18,7 +18,9 @@ void make_sm(int n,long long int s[n+1][n+1],long long int m[n+1][n+1], int D[n+
 void print_matrix(Matrix * R, int r, int c );
 void print_all_matrix(Matrix *restrict all_matrix[],int D[],int n);
 Matrix * matrix_chain_multiplication(int si,int ei,int n,Matrix *restrict all_matrix[],int D[n+1],long long int s[n+1][n+1]);
-Matrix * multiply_matrix(Matrix * a, Matrix * b,int p,int q, int r);
+Matrix * multiply_matrix_v1(Matrix * a, Matrix * b,int p,int q, int r);
+Matrix * multiply_matrix_v2(Matrix * a, Matrix * b,int p,int q, int r);
+Matrix * multiply_matrix_v3(Matrix * a, Matrix * b,int p,int q, int r);
 
 
 int main()
@@ -158,7 +160,7 @@ Matrix * matrix_chain_multiplication(int si,int ei,int n,Matrix *restrict all_ma
 
     int pi = s[si][ei];
 
-    Matrix * ret =  multiply_matrix(matrix_chain_multiplication(si,pi,n,all_matrix,D,s),matrix_chain_multiplication(pi+1,ei,n,all_matrix,D,s),ret_matrix_row,D[si],ret_matrix_col);
+    Matrix * ret =  multiply_matrix_v3(matrix_chain_multiplication(si,pi,n,all_matrix,D,s),matrix_chain_multiplication(pi+1,ei,n,all_matrix,D,s),ret_matrix_row,D[si],ret_matrix_col);
 
     struct timespec et;
     clock_gettime(CLOCK_MONOTONIC, &et);
@@ -169,7 +171,40 @@ Matrix * matrix_chain_multiplication(int si,int ei,int n,Matrix *restrict all_ma
 }
 
 
-Matrix * multiply_matrix(Matrix * a, Matrix * b,int p,int q, int r)
+Matrix * multiply_matrix_v1(Matrix * a, Matrix * b,int p,int q, int r)
+{    
+
+    struct timespec st;
+    clock_gettime(CLOCK_MONOTONIC, &st);
+
+    Matrix *result;
+    result=malloc(sizeof(Matrix));
+
+    for (int i = 0; i < p; i++)	
+    {
+        for (int j = 0; j < r; j++) 
+            result->matrix[i][j] =0;
+    }
+
+ 
+    for (int i = 0; i < p; i++)	
+    {
+        for(int j = 0; j < r; j++) 
+        {
+            for  (int k = 0; k < q; k++) 
+                result->matrix[i][j] += (a->matrix[i][k] * b->matrix[k][j]);
+        }
+    }
+    struct timespec et;
+    clock_gettime(CLOCK_MONOTONIC, &et);
+
+    double time_taken = (et.tv_sec - st.tv_sec) + 1e-9*(et.tv_nsec - st.tv_nsec);
+    printf("Time taken by the matrix-multiplication: %lf, p= %d,q= %d,r= %d\n",time_taken,p,q,r);
+    return result;
+}
+
+
+Matrix * multiply_matrix_v2(Matrix * a, Matrix * b,int p,int q, int r)
 {    
 
     struct timespec st;
@@ -193,76 +228,85 @@ Matrix * multiply_matrix(Matrix * a, Matrix * b,int p,int q, int r)
                 result->matrix[i][j] += (a->matrix[i][k] * b->matrix[k][j]);
         }
     }
-    // for (int i = 0; i < p; i++)	
-    // {
-    //     for   (int j = 0; j < r; j++) 
-    //     {
-    //         for(int k = 0; k < q; k++)
-    //             result->matrix[i][j] += (a->matrix[i][k] * b->matrix[k][j]);
-    //     }
-    // }
-    
 
-    // #define N 1000
+    struct timespec et;
+    clock_gettime(CLOCK_MONOTONIC, &et);
 
-    // int stridei = 20, stridek = 512, stridej = 20, i, j, k, gotill;
-    // register int *arow;
-    // register int *brow;
-    // register int ii, jj, kk, tmp;
+    double time_taken = (et.tv_sec - st.tv_sec) + 1e-9*(et.tv_nsec - st.tv_nsec);
+    printf("Time taken by the matrix-multiplication: %lf, p= %d,q= %d,r= %d\n",time_taken,p,q,r);
+    return result;
+}
 
-    // for(ii = 0; ii < p; ii++){
-    //     for(jj = 0; jj < r; jj++){
-    //         result->matrix[ii][jj] = 0;
-    //     }
-    // }
 
-    // #define min(x, y) (y^((x^y) & -(x<y)))
+Matrix * multiply_matrix_v3(Matrix * a, Matrix * b,int p,int q, int r)
+{    
 
-    // for(i = 0; i < N; i++){
-    //     for(j = 0; j < i; j++){
-    //         tmp = b->matrix[i][j];
-    //         b->matrix[i][j] = b->matrix[j][i];
-    //         b->matrix[j][i] = tmp;
-    //     }
-    // }
+    struct timespec st;
+    clock_gettime(CLOCK_MONOTONIC, &st);
 
-    // for(i = 0; i < p; i += stridei){
-    //     for(j = 0; j < r; j += stridej){
-    //         for(k = 0; k < q; k += stridek){
-    //             for(ii = i; ii < min(i + stridei, p); ii++){
-    //                 arow = a->matrix[ii];
-    //                 for(jj = j; jj < min(j + stridej, r); jj++){
-    //                     gotill = min(k + stridek, q);
-    //                     tmp = 0;
-    //                     brow = b->matrix[jj];
-    //                     for(kk = k; kk + 15 < gotill; kk+=16){
-    //                         tmp += arow[kk + 0] * brow[kk + 0]
-    //                             +  arow[kk + 1] * brow[kk + 1]
-    //                             +  arow[kk + 2] * brow[kk + 2]
-    //                             +  arow[kk + 3] * brow[kk + 3]
-    //                             +  arow[kk + 4] * brow[kk + 4]
-    //                             +  arow[kk + 5] * brow[kk + 5]
-    //                             +  arow[kk + 6] * brow[kk + 6]
-    //                             +  arow[kk + 7] * brow[kk + 7]
-    //                             +  arow[kk + 8] * brow[kk + 8]
-    //                             +  arow[kk + 9] * brow[kk + 9]
-    //                             +  arow[kk + 10] * brow[kk + 10]
-    //                             +  arow[kk + 11] * brow[kk + 11]
-    //                             +  arow[kk + 12] * brow[kk + 12]
-    //                             +  arow[kk + 13] * brow[kk + 13]
-    //                             +  arow[kk + 14] * brow[kk + 14]
-    //                             +  arow[kk + 15] * brow[kk + 15];
-    //                     }
-    //                     while(kk < gotill){
-    //                         tmp += arow[kk] * brow[kk];
-    //                         kk++;
-    //                     }
-    //                     result->matrix[ii][jj] += tmp;
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
+    Matrix *result;
+    result=malloc(sizeof(Matrix));
+
+    #define N 1000
+
+    int stridei = 20, stridek = 512, stridej = 20, i, j, k, gotill;
+    register int *arow;
+    register int *brow;
+    register int ii, jj, kk, tmp;
+
+    for(ii = 0; ii < p; ii++){
+        for(jj = 0; jj < r; jj++){
+            result->matrix[ii][jj] = 0;
+        }
+    }
+
+    #define min(x, y) (y^((x^y) & -(x<y)))
+
+    for(i = 0; i < N; i++){
+        for(j = 0; j < i; j++){
+            tmp = b->matrix[i][j];
+            b->matrix[i][j] = b->matrix[j][i];
+            b->matrix[j][i] = tmp;
+        }
+    }
+
+    for(i = 0; i < p; i += stridei){
+        for(j = 0; j < r; j += stridej){
+            for(k = 0; k < q; k += stridek){
+                for(ii = i; ii < min(i + stridei, p); ii++){
+                    arow = a->matrix[ii];
+                    for(jj = j; jj < min(j + stridej, r); jj++){
+                        gotill = min(k + stridek, q);
+                        tmp = 0;
+                        brow = b->matrix[jj];
+                        for(kk = k; kk + 15 < gotill; kk+=16){
+                            tmp += arow[kk + 0] * brow[kk + 0]
+                                +  arow[kk + 1] * brow[kk + 1]
+                                +  arow[kk + 2] * brow[kk + 2]
+                                +  arow[kk + 3] * brow[kk + 3]
+                                +  arow[kk + 4] * brow[kk + 4]
+                                +  arow[kk + 5] * brow[kk + 5]
+                                +  arow[kk + 6] * brow[kk + 6]
+                                +  arow[kk + 7] * brow[kk + 7]
+                                +  arow[kk + 8] * brow[kk + 8]
+                                +  arow[kk + 9] * brow[kk + 9]
+                                +  arow[kk + 10] * brow[kk + 10]
+                                +  arow[kk + 11] * brow[kk + 11]
+                                +  arow[kk + 12] * brow[kk + 12]
+                                +  arow[kk + 13] * brow[kk + 13]
+                                +  arow[kk + 14] * brow[kk + 14]
+                                +  arow[kk + 15] * brow[kk + 15];
+                        }
+                        while(kk < gotill){
+                            tmp += arow[kk] * brow[kk];
+                            kk++;
+                        }
+                        result->matrix[ii][jj] += tmp;
+                    }
+                }
+            }
+        }
+    }
 
     struct timespec et;
     clock_gettime(CLOCK_MONOTONIC, &et);
