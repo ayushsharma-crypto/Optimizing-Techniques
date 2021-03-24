@@ -1,0 +1,31 @@
+gcc -std=c99 matmul.c -O0 -o matmul
+./matmul < testcases/sample/Q1/0.txt > temp
+diff temp testcases/sample/Q1out/0.txt 
+./matmul < testcases/sample/Q1/5.txt > temp
+diff temp testcases/sample/Q1out/5.txt 
+./matmul < testcases/sample/Q1/10.txt > temp
+diff temp testcases/sample/Q1out/10.txt 
+./matmul < testcases/sample/Q1/15.txt > temp
+diff temp testcases/sample/Q1out/15.txt 
+./matmul < testcases/sample/Q1/20.txt > temp
+diff temp testcases/sample/Q1out/20.txt 
+./matmul < testcases/sample/Q1/30.txt > temp
+diff temp testcases/sample/Q1out/30.txt 
+./matmul < testcases/sample/Q1/40.txt > temp
+diff temp testcases/sample/Q1out/40.txt 
+./matmul < testcases/sample/Q1/50.txt > temp
+diff temp testcases/sample/Q1out/50.txt 
+./matmul < testcases/sample/Q1/55.txt > temp
+diff temp testcases/sample/Q1out/55.txt 
+./matmul < testcases/sample/Q1/60.txt > temp
+diff temp testcases/sample/Q1out/60.txt 
+./matmul < testcases/sample/Q1/70.txt > temp
+diff temp testcases/sample/Q1out/70.txt 
+./matmul < testcases/sample/Q1/75.txt > temp
+diff temp testcases/sample/Q1out/75.txt 
+./matmul < testcases/sample/Q1/80.txt > temp
+diff temp testcases/sample/Q1out/80.txt 
+./matmul < testcases/sample/Q1/85.txt > temp
+diff temp testcases/sample/Q1out/85.txt 
+./matmul < testcases/sample/Q1/90.txt > temp
+diff temp testcases/sample/Q1out/90.txt 

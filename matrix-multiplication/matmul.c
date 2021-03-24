@@ -9,7 +9,7 @@
 
 
 typedef struct Matrix {
-	int matrix[DEFAULT_ROW][DEFAULT_COLUMN];
+	long long int matrix[DEFAULT_ROW][DEFAULT_COLUMN];
 } Matrix;
 
 
@@ -47,7 +47,7 @@ int main()
 
     clock_gettime(CLOCK_MONOTONIC, &mid1);
     double time_taken1 = (mid1.tv_sec - start.tv_sec) + 1e-9*(mid1.tv_nsec - start.tv_nsec);
-    printf("Time taken while getting input: %lf\n",time_taken1);
+    // printf("Time taken while getting input: %lf\n",time_taken1);
 
 
     long long int m[n+1][n+1];
@@ -57,18 +57,18 @@ int main()
 
     clock_gettime(CLOCK_MONOTONIC, &mid2);
     double time_taken2 = (mid2.tv_sec - mid1.tv_sec) + 1e-9*(mid2.tv_nsec - mid1.tv_nsec);
-    printf("Time taken for function make_sm: %lf\n",time_taken2);
+    // printf("Time taken for function make_sm: %lf\n",time_taken2);
 
 
     Matrix * answer = matrix_chain_multiplication(1,n,n,all_matrix,D,s);
 
-    // printf("%d %d\n",D[0],D[n]);
-    // print_matrix(answer,D[0],D[n]);
+    printf("%d %d\n",D[0],D[n]);
+    print_matrix(answer,D[0],D[n]);
 
     clock_gettime(CLOCK_MONOTONIC, &end);
     double time_taken3 = (end.tv_sec - mid2.tv_sec) + 1e-9*(end.tv_nsec - mid2.tv_nsec);
-    printf("Time taken by the matrix-chain-multiplication: %lf\n",time_taken3);
-    printf("Total time: %lf\n",time_taken1+time_taken2+time_taken3);
+    // printf("Time taken by the matrix-chain-multiplication: %lf\n",time_taken3);
+    // printf("Total time: %lf\n",time_taken1+time_taken2+time_taken3);
     
 
     return 0;
@@ -127,7 +127,7 @@ void print_matrix(Matrix * R, int r, int c )
     {
 		for (int j = 0; j < c; j++) 
         {
-            printf("%d ",R->matrix[i][j]);
+            printf("%lld ",R->matrix[i][j]);
 		}
         printf("\n");
 	}
@@ -150,7 +150,7 @@ Matrix * matrix_chain_multiplication(int si,int ei,int n,Matrix *restrict all_ma
 {
     struct timespec st;
     clock_gettime(CLOCK_MONOTONIC, &st);
-    printf("si = %d and ei = %d\n",si,ei);
+    // printf("si = %d and ei = %d\n",si,ei);
 
     if (si==ei)
         return all_matrix[si-1];
@@ -160,13 +160,13 @@ Matrix * matrix_chain_multiplication(int si,int ei,int n,Matrix *restrict all_ma
 
     int pi = s[si][ei];
 
-    Matrix * ret =  multiply_matrix_v3(matrix_chain_multiplication(si,pi,n,all_matrix,D,s),matrix_chain_multiplication(pi+1,ei,n,all_matrix,D,s),ret_matrix_row,D[si],ret_matrix_col);
+    Matrix * ret =  multiply_matrix_v1(matrix_chain_multiplication(si,pi,n,all_matrix,D,s),matrix_chain_multiplication(pi+1,ei,n,all_matrix,D,s),ret_matrix_row,D[si],ret_matrix_col);
 
     struct timespec et;
     clock_gettime(CLOCK_MONOTONIC, &et);
 
     double time_taken = (et.tv_sec - st.tv_sec) + 1e-9*(et.tv_nsec - st.tv_nsec);
-    printf("Time taken by the matrix-multiplication-chain: %lf, si= %d,ei= %d\n",time_taken,si,ei);
+    // printf("Time taken by the matrix-multiplication-chain: %lf, si= %d,ei= %d\n",time_taken,si,ei);
     return ret;
 }
 
@@ -199,7 +199,7 @@ Matrix * multiply_matrix_v1(Matrix * a, Matrix * b,int p,int q, int r)
     clock_gettime(CLOCK_MONOTONIC, &et);
 
     double time_taken = (et.tv_sec - st.tv_sec) + 1e-9*(et.tv_nsec - st.tv_nsec);
-    printf("Time taken by the matrix-multiplication: %lf, p= %d,q= %d,r= %d\n",time_taken,p,q,r);
+    // printf("Time taken by the matrix-multiplication: %lf, p= %d,q= %d,r= %d\n",time_taken,p,q,r);
     return result;
 }
 
@@ -233,7 +233,7 @@ Matrix * multiply_matrix_v2(Matrix * a, Matrix * b,int p,int q, int r)
     clock_gettime(CLOCK_MONOTONIC, &et);
 
     double time_taken = (et.tv_sec - st.tv_sec) + 1e-9*(et.tv_nsec - st.tv_nsec);
-    printf("Time taken by the matrix-multiplication: %lf, p= %d,q= %d,r= %d\n",time_taken,p,q,r);
+    // printf("Time taken by the matrix-multiplication: %lf, p= %d,q= %d,r= %d\n",time_taken,p,q,r);
     return result;
 }
 
@@ -312,6 +312,6 @@ Matrix * multiply_matrix_v3(Matrix * a, Matrix * b,int p,int q, int r)
     clock_gettime(CLOCK_MONOTONIC, &et);
 
     double time_taken = (et.tv_sec - st.tv_sec) + 1e-9*(et.tv_nsec - st.tv_nsec);
-    printf("Time taken by the matrix-multiplication: %lf, p= %d,q= %d,r= %d\n",time_taken,p,q,r);
+    // printf("Time taken by the matrix-multiplication: %lf, p= %d,q= %d,r= %d\n",time_taken,p,q,r);
     return result;
 }
