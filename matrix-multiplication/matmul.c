@@ -278,6 +278,8 @@ Matrix * multiply_matrix_v3(Matrix * a, Matrix * b,int p,int q, int r)
             result->matrix[i][j] =0;
     }
 
+    transpose_matrix(b);
+
  
     for (int i = 0; i < p; i++)	
     {
@@ -285,7 +287,7 @@ Matrix * multiply_matrix_v3(Matrix * a, Matrix * b,int p,int q, int r)
         {
             register long long int temp = 0;
             for  (int k = 0; k < q; k++) 
-                temp += (a->matrix[i][k] * b->matrix[k][j]);
+                temp += (a->matrix[i][k] * b->matrix[j][k]);
             result->matrix[i][j] = temp;
         }
     }
