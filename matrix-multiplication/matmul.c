@@ -306,7 +306,7 @@ Matrix * multiply_matrix_v4(Matrix * a, Matrix * b,int p,int q, int r)
     Matrix *result;
     result=malloc(sizeof(Matrix));
 
-    register int ii, jj, kk, BLOCK=21,BLOCK_SUM=256;
+    register int ii, jj, kk, BLOCK=21,BLOCK_SUM=512;
     register long long int *aii;
     register long long int *bjj;
 
