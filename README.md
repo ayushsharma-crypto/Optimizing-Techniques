@@ -481,8 +481,9 @@ Final Result
 On Abacus we get best running time to be `~19s` with our final code.
 Profiling on abacus:
 
-### `perf`
+### `gprof`
 ![alt text](https://github.com/ayushsharma-crypto/Optimizing-Techniques/blob/main/floyd-warshall/images/f-gprof.png)
 
-### `gprof`
+
+### `perf`
 ![alt text](https://github.com/ayushsharma-crypto/Optimizing-Techniques/blob/main/floyd-warshall/images/f-perf.png)
