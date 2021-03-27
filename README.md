@@ -238,12 +238,13 @@ Matrix * multiply_matrix_v4(Matrix * a, Matrix * b,int p,int q, int r)
     return result;
 }
 ```
-Run time was `(5+-0.2) s`
+Run time was `(3+-0.2) s`
 
 
 Final Result
 ---
-
+On Abacus we get best running time to be `(5+-0.2)s` with our final code.
+Profiling on abacus:
 
 ### `perf`
 
@@ -394,7 +395,7 @@ Run time was reduced to `~15s`
 
 ### V5
 
-* Did some research and found about Blocked Floyd Warshall algorithm. But it increased the time to `~20s`. This may be because blocking works well only for parallelization with cilk_for which we are not allowed to use.
+* Did some research and found about Blocked Floyd Warshall algorithm. But it increased the time to `~22.5s`. This may be because blocking works well only for parallelization with cilk_for which we are not allowed to use.
 
 ```c
 
@@ -476,7 +477,8 @@ void floyd_v3(int * matrix, int V)
 
 Final Result
 ---
-
+On Abacus we get best running time to be `~19s` with our final code.
+Profiling on abacus:
 
 ### `perf`
 
