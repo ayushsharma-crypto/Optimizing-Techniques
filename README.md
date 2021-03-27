@@ -6,6 +6,11 @@ Optimizing  Techniques
 
 Demonstrating the techniques that can be used to improve the performance of a program using example of Matrix Chain Multiplication and Floyd Warshal Algorithm. Used ​ perf, cache grind, gprof, and clock_gettime for profiling of all techniques tried during optimization.
 
+* C language has been used.
+* Code during optimization were run with -O0 flag. i.e. zero compiler optimization
+* Timings during optimization were calculated on local pc with conf. [Ubuntu 18.04.5 LTS, Intel® Core™ i5-8265U CPU @ 1.60GHz × 8 ,Intel® UHD Graphics 620 (WHL GT2), 64-bit]. After the best possible optimization was done, I profiled the final code on abacus server provided to us (and will attach the ss in the last of each algo).
+
+
 Profiling Tools
 ===
 
@@ -70,6 +75,13 @@ It is used to time various part of the program. POSIX is a standard for implemen
 > - clock_gettime() : The clock_gettime() function gets the current time of the clock specified by clock_id, and puts it into the buffer pointed to by tp.
 > - Header File : “time.h”.
 > - Prototype / Syntax : int clock_gettime( clockid_t clock_id, struct timespec *tp );
+
+> - Return Value : return 0 for success, or -1 for failure.
+> - clock_id : clock id = CLOCK_REALTIME,
+> - CLOCK_PROCESS_CPUTIME_ID, CLOCK_MONOTONIC … etc.
+> - CLOCK_REALTIME : clock that measures real i.e., wall-clock) time.
+> - CLOCK_PROCESS_CPUTIME_ID : High-resolution per-process timer from the CPU.
+> - CLOCK_MONOTONIC : High resolution timer that is unaffected by system date changes (e.g. NTP daemons).
 > - tp parameter points to a structure containing atleast the following members :
 ```c
 struct timespec {
@@ -77,17 +89,261 @@ time_t tv_sec; //seconds
 long tv_nsec; //nanoseconds
 };
 ```
-> - Return Value : return 0 for success, or -1 for failure.
-> - clock_id : clock id = CLOCK_REALTIME,
-> - CLOCK_PROCESS_CPUTIME_ID, CLOCK_MONOTONIC … etc.
-> - CLOCK_REALTIME : clock that measures real i.e., wall-clock) time.
-> - CLOCK_PROCESS_CPUTIME_ID : High-resolution per-process timer from the CPU.
-> - CLOCK_MONOTONIC : High resolution timer that is unaffected by system date changes (e.g. NTP daemons).
+
+**USAGE** :
+```c
+# include<time.h>
+int clock_gettime(clockid_t clk_id, struct timespec *tp);
+```
+
 
 
 Matrix Chain Multiplication
 ===
 
 
+
+Final Result
+---
+
+
+### `perf`
+
+### `cachegrind`
+
+### `gprof`
+
+### `clock_gettime()`
+
+
+
 Floyd Warshall Algorithm
 ===
+
+Floyd–Warshall algorithm is an algorithm for finding shortest paths in a directed weighted graph with positive or negative edge weights. A single execution of the algorithm will find the lengths of shortest paths between all pairs of vertices.
+
+Optimizations
+---
+
+We were given 10 test cases out of which the largest was having `2229` numbr of nodes and `155317` number of edges. There can be self loop and multiple edges between same two nodes. Although I profiled all of them but will list timings and cache profile for that largest test case only. 
+
+<I>Time taken</I> with the trivial algorithm i.e. no optimisation : `>63 seconds`
+
+### V1
+
+* Converted 2-D array for storing adjacency matrix into 1-D. Then for accessing `A[i][j]` we used pointer notation `(*(A + i*V + j))`, with keeping in mind the fact that generally 2-D matrices are stored in Row Major format in main memory.
+* Pointer accesing to memory Restricted pointer access instead of array look-ups.
+* Pre increment over post increment Pre-increment is faster than post-increment because post increment keeps a copy of previous (existing) value and adds 1 in the existing value while pre-increment is simply adds 1 without keeping the existing value.
+```c
+void floyd_v1(int * matrix, int V)
+{
+    for(int k=0;k<V;++k)
+    {
+        for(int i=0;i<V;++i)
+        {
+            for(int j=0;j<V;++j)
+            {
+                if(k==j) continue;
+                if(k==i) continue;
+                if( (*(matrix + k*V + j)) == INFINITY ) continue;
+                if( (*(matrix + i*V + k)) == INFINITY ) continue;
+                if( (*(matrix + i*V + j)) > ( (*(matrix + i*V + k) ) + ( *(matrix + k*V + j) ) ) ) 
+                    (*(matrix + i*V + j)) = ( (*(matrix + i*V + k) ) + ( *(matrix + k*V + j) ) );
+            }
+        }
+    }
+}
+```
+Run time was still `~58s`.
+
+
+### V2
+
+* Used `register` keyword to reduce fetch time for `i`,`j`,`k` iterators which were being used more often.
+* Used a temporary variable for storing and reducing memory lookup using pointers i.e. `register int * kmj = (matrix + k*V + j);` and `register int * imk = (matrix + i*V + k);`
+
+```c
+void floyd_v2(int * matrix, int V)
+{
+    register int i,j,k,kmj,imk, v;
+    register int * km;
+    register int * im;
+    v = V;
+    for(k=0;k<v;++k)
+    {
+        for(i=0;i<v;++i)
+        {
+            for(j=0;j<v;j++)
+            {
+                if(k==j) continue;
+                if(k==i) continue;
+                register int * kmj = (matrix + k*V + j);
+                if( (*kmj) == INFINITY ) continue;
+                register int * imk = (matrix + i*V + k);
+                if( (*imk) == INFINITY ) continue;
+                if( (*(matrix + i*V + j)) > ( kmj + imk ) ) (*(matrix + i*V + j)) = ( kmj + imk );
+            }
+        }
+    }
+}
+```
+
+Run time was `~37.56s`.
+
+### V3
+
+* Tweaked the value of `INFINITY` to 1000000000.
+* Removed spurious `if` conditions.
+* Used more general memory lookup pointer variable i.e. replace `imk` & `kmj` with `im` and `km`. These new variable will be have more reads / writes ratio as compared to  `imk` & `kmj` .
+```c
+
+void floyd_v2(int * matrix, int V)
+{
+    register int i,j,k,kmj,imk, v;
+    register int * km;
+    register int * im;
+    v = V;
+    for(k=0;k<v;++k)
+    {
+        km = (matrix + k*v);
+        for(i=0;i<v;++i)
+        {
+            im = (matrix + i*v);
+            for(j=0;j<v;++j)
+            {
+                ...
+            }
+        }
+    }
+}
+```
+Run time was `~25s`
+
+
+### V4
+
+* Saw chance of loop unrolling, hence grabbed the opportunity. Experimenting with values we get 16 as optimised unrolling parameter.
+```c
+
+void floyd_v2(int * matrix, int V)
+{
+    ...
+            for(j=0;j+15<v;j+=16)
+            {
+                imk = (*(im + k));
+
+                kmj = (*(km + j+0));
+                if( (*(im + j+0)) > ( kmj + imk ) ) (*(im + j+0)) = ( kmj + imk );
+                ...
+                
+                kmj = (*(km + j+15));
+                if( (*(im + j+15)) > ( kmj + imk ) ) (*(im + j+15)) = ( kmj + imk );
+            }
+            while(j<v)
+            {
+                kmj = (*(km + j));
+                imk = (*(im + k));
+                if( (*(im + j)) > ( kmj + imk ) ) (*(im + j)) = ( kmj + imk );
+                j++;
+            }
+        }
+    }
+}
+
+```
+Run time was reduced to `~15s`
+
+
+### V5
+
+* Did some research and found about Blocked Floyd Warshall algorithm. But it increased the time to `~20s`. This may be because blocking works well only for parallelization with cilk_for which we are not allowed to use.
+
+```c
+
+void FW_BLOCK(int * matrix,register int I,register int J,register int K,register int BLOCK,register int V)
+{
+    register int ii, jj, kk;
+    register int GOTILL = fun_min(V,K+BLOCK);
+    register int FH = fun_min(V, I+BLOCK);
+    register int FW = fun_min(V, J+BLOCK);
+    
+    for(kk=K;kk<GOTILL;++kk)
+    {
+        for(ii=I;ii<FH;++ii)
+        {
+            register int aik = (*(matrix + ( V*(ii) ) + ( kk )));
+            for(jj=J;jj+15<FW;jj+=16)
+            {
+                register int bkj = (*(matrix + ( V*( kk ) ) + ( jj + 0 )));
+                register int * mm = (matrix + ( V*( ii ) ) + ( jj + 0 ));
+                if( aik+bkj < (*(mm)) ) (*(mm))= aik + bkj;
+
+                ...
+            
+                bkj = (*(matrix + ( V*( kk ) ) + ( jj + 15 )));
+                mm = (matrix + ( V*( ii ) ) + ( jj + 15 ));
+                if( aik+bkj < (*(mm)) ) (*(mm))= aik + bkj;
+            }
+            while (jj<FW)
+            {
+                register int bkj = (*(matrix + ( V*( kk ) ) + ( jj )));
+                register int * mm = (matrix + ( V*( ii ) ) + ( jj ));
+                if( aik+bkj < (*(mm)) )
+                    (*(mm))= aik + bkj;
+                jj++;
+            }
+            
+        }
+    }
+}
+
+void floyd_v3(int * matrix, int V)
+{
+    register int BLOCK=512,v = V;
+
+    for(register int K=0;K<v;K+=BLOCK)
+    {
+        // Diagonal update
+        FW_BLOCK(matrix,K,K,K,BLOCK,v);
+        
+
+        // Panel Update
+        for(register int J=0;J<v;J+=BLOCK)
+        {
+            if(J!=K) 
+            {
+                // row
+                FW_BLOCK(matrix,K,J,K,BLOCK,v);
+                // col
+                FW_BLOCK(matrix,J,K,K,BLOCK,v);
+            }
+        }
+
+        // MinPlus Outer Product
+        for(register int I=0;I<v;I+=BLOCK)
+        {
+            if (I==K) continue;
+            for(register int J=0;J<v;J+=BLOCK)
+            {
+                if(J!=K) 
+                {
+                    FW_BLOCK(matrix,I,J,K,BLOCK,v);
+                }
+            }
+        }
+    }
+}
+```
+
+
+Final Result
+---
+
+
+### `perf`
+
+### `cachegrind`
+
+### `gprof`
+
+### `clock_gettime()`
