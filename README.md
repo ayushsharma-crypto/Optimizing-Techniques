@@ -247,12 +247,13 @@ On Abacus we get best running time to be `(5+-0.2)s` with our final code.
 Profiling on abacus:
 
 ### `perf`
+![alt text](https://github.com/ayushsharma-crypto/Optimizing-Techniques/blob/main/matrix-multiplication/images/Final/perf.png)
 
 ### `cachegrind`
+![alt text](https://github.com/ayushsharma-crypto/Optimizing-Techniques/blob/main/matrix-multiplication/images/Final/cachegrind.png)
 
 ### `gprof`
-
-### `clock_gettime()`
+![alt text](https://github.com/ayushsharma-crypto/Optimizing-Techniques/blob/main/matrix-multiplication/images/Final/gprof.png)
 
 
 
@@ -481,9 +482,7 @@ On Abacus we get best running time to be `~19s` with our final code.
 Profiling on abacus:
 
 ### `perf`
-
-### `cachegrind`
+![alt text](https://github.com/ayushsharma-crypto/Optimizing-Techniques/blob/main/floyd-warshall/images/f-gprof.png)
 
 ### `gprof`
-
-### `clock_gettime()`
+![alt text](https://github.com/ayushsharma-crypto/Optimizing-Techniques/blob/main/floyd-warshall/images/f-perf.png)
