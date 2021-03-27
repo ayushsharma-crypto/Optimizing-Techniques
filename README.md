@@ -18,23 +18,19 @@ Perf
 
 Some of the general supported commands:
 
--------------------
 > - stat : Used to run a command and obtain performance counter statistics on it.
 > - record : Used to record the profile of a cmmand in perf.data file.
 > - report : It read perf.data and display the corresponding profile
 > - list : It will list all the symbolic event types
 
-------------------------
 
 Some of the general supported options:
 
--------------------
 > - -a : Used for tracing system wide performance including the CPUs.
 > - -e : Selects events from the list which can be obtained by doing `perf list`.
 > - -p : It stats and trace the events on the provide Process ID.
 > - -t : It stats and trace the events on the provide Thread ID.
 
-------------------------
 
 Cachegrind
 ---
