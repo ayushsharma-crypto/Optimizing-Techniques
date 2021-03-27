@@ -7,8 +7,8 @@ int INFINITY =  1000000000;
 
 int fun_min(int x, int y);
 // void floyd_v1(int * matrix, int V);
-// void floyd_v2(int * matrix, int V);
-void floyd_v3(int * matrix, int V);
+void floyd_v2(int * matrix, int V);
+// void floyd_v3(int * matrix, int V);
 
 
 int main()
@@ -36,7 +36,7 @@ int main()
         if (*(matrix + (x-1)*V + (y-1))>w) *(matrix + (x-1)*V + (y-1))=w;
     }
 
-    floyd_v3(matrix,V);
+    floyd_v2(matrix,V);
 
     for(int i=0;i<V;++i)
     {
@@ -81,106 +81,138 @@ int fun_min(int x, int y)
 // }
 
 
-// void floyd_v2(int * matrix, int V)
+void floyd_v2(int * matrix, int V)
+{
+    register int i,j,k,kmj,imk, v;
+    register int * km;
+    register int * im;
+    v = V;
+    for(k=0;k<v;++k)
+    {
+        km = (matrix + k*v);
+        for(i=0;i<v;++i)
+        {
+            im = (matrix + i*v);
+            for(j=0;j+15<v;j+=16)
+            {
+                imk = (*(im + k));
+
+                kmj = (*(km + j+0));
+                if( (*(im + j+0)) > ( kmj + imk ) ) (*(im + j+0)) = ( kmj + imk );
+                
+                kmj = (*(km + j+1));
+                if( (*(im + j+1)) > ( kmj + imk ) ) (*(im + j+1)) = ( kmj + imk );
+                
+                kmj = (*(km + j+2));
+                if( (*(im + j+2)) > ( kmj + imk ) ) (*(im + j+2)) = ( kmj + imk );
+                
+                kmj = (*(km + j+3));
+                if( (*(im + j+3)) > ( kmj + imk ) ) (*(im + j+3)) = ( kmj + imk );
+                
+                kmj = (*(km + j+4));
+                if( (*(im + j+4)) > ( kmj + imk ) ) (*(im + j+4)) = ( kmj + imk );
+                
+                kmj = (*(km + j+5));
+                if( (*(im + j+5)) > ( kmj + imk ) ) (*(im + j+5)) = ( kmj + imk );
+                
+                kmj = (*(km + j+6));
+                if( (*(im + j+6)) > ( kmj + imk ) ) (*(im + j+6)) = ( kmj + imk );
+                
+                kmj = (*(km + j+7));
+                if( (*(im + j+7)) > ( kmj + imk ) ) (*(im + j+7)) = ( kmj + imk );
+                
+                kmj = (*(km + j+8));
+                if( (*(im + j+8)) > ( kmj + imk ) ) (*(im + j+8)) = ( kmj + imk );
+                
+                kmj = (*(km + j+9));
+                if( (*(im + j+9)) > ( kmj + imk ) ) (*(im + j+9)) = ( kmj + imk );
+                
+                kmj = (*(km + j+10));
+                if( (*(im + j+10)) > ( kmj + imk ) ) (*(im + j+10)) = ( kmj + imk );
+                
+                kmj = (*(km + j+11));
+                if( (*(im + j+11)) > ( kmj + imk ) ) (*(im + j+11)) = ( kmj + imk );
+                
+                kmj = (*(km + j+12));
+                if( (*(im + j+12)) > ( kmj + imk ) ) (*(im + j+12)) = ( kmj + imk );
+                
+                kmj = (*(km + j+13));
+                if( (*(im + j+13)) > ( kmj + imk ) ) (*(im + j+13)) = ( kmj + imk );
+                
+                kmj = (*(km + j+14));
+                if( (*(im + j+14)) > ( kmj + imk ) ) (*(im + j+14)) = ( kmj + imk );
+                
+                kmj = (*(km + j+15));
+                if( (*(im + j+15)) > ( kmj + imk ) ) (*(im + j+15)) = ( kmj + imk );
+            }
+            while(j<v)
+            {
+                kmj = (*(km + j));
+                imk = (*(im + k));
+                if( (*(im + j)) > ( kmj + imk ) ) (*(im + j)) = ( kmj + imk );
+                j++;
+            }
+        }
+    }
+}
+
+
+// void FW_BLOCK(int * matrix,register int I,register int J,register int K,register int BLOCK,register int V)
 // {
-//     register int i,j,k,kmj,imk, v;
-//     register int * km;
-//     register int * im;
-//     v = V;
-//     for(k=0;k<v;++k)
+//     register int ii, jj, kk;
+//     register int GOTILL = fun_min(V,K+BLOCK);
+//     register int FH = fun_min(V, I+BLOCK);
+//     register int FW = fun_min(V, J+BLOCK);
+    
+//     for(kk=K;kk<GOTILL;++kk)
 //     {
-//         km = (matrix + k*v);
-//         for(i=0;i<v;++i)
+//         for(ii=I;ii<FH;++ii)
 //         {
-//             im = (matrix + i*v);
-//             for(j=0;j<v;++j)
+//             register int aik = (*(matrix + ( V*(ii) ) + ( kk )));
+//             for(jj=J;jj<FW;++jj)
 //             {
-//                 kmj = (*(km + j));
-//                 imk = (*(im + k));
-//                 if( (*(im + j)) > ( kmj + imk ) ) 
-//                     (*(im + j)) = ( kmj + imk );
+//                 register int bkj = (*(matrix + ( V*( kk ) ) + ( jj )));
+//                 register int * mm = (matrix + ( V*( ii ) ) + ( jj ));
+//                 if( aik+bkj < (*(mm)) )
+//                     (*(mm))= aik + bkj;
 //             }
 //         }
 //     }
 // }
 
+// void floyd_v3(int * matrix, int V)
+// {
+//     register int BLOCK=512,v = V;
 
-void FW_BLOCK(int * matrix,register int I,register int J,register int K,register int BLOCK,register int V)
-{
-    register int ii, jj, kk;
-    int GOTILL = fun_min(V,K+BLOCK);
-
-    int FH = fun_min(V, I+BLOCK)-I+1;
-    int FW = fun_min(V, J+BLOCK)-J+1;
-    
-    int AH = fun_min(V, I+BLOCK)-I+1;
-    int AW = fun_min(V, K+BLOCK)-K+1;
-    
-    int BH = fun_min(V, K+BLOCK)-K+1;
-    int BW = fun_min(V, J+BLOCK)-J+1;
-    
-    for(kk=K;kk<GOTILL;++kk)
-    {
-        for(ii=0;ii<FH;++ii)
-        {
-            for(jj=0;jj<FW;++jj)
-            {
-                if(kk==jj) continue;
-                if(kk==ii) continue;
-                register int aik = (*(matrix + ( V*(I+ii) ) + ( kk )));
-                if( aik == INFINITY) continue;
-                register int bkj = (*(matrix + ( V*( kk ) ) + ( J + jj )));
-                if( bkj == INFINITY) continue;
-                if( aik+bkj < (*(matrix + ( V*( I + ii ) ) + ( J + jj ))) )
-                    (*(matrix + ( V*( I + ii ) ) + ( J + jj )))= aik + bkj;
-            }
-        }
-    }
-}
-
-void floyd_v3(int * matrix, int V)
-{
-    register int BLOCK=16;
-
-    for(int K=0;K<V;K+=BLOCK)
-    {
-        // Diagonal update
-        printf("\n\nDiagonal K=%d\n\n",K);
-        FW_BLOCK(matrix,K,K,K,BLOCK,V);
+//     for(register int K=0;K<v;K+=BLOCK)
+//     {
+//         // Diagonal update
+//         FW_BLOCK(matrix,K,K,K,BLOCK,v);
         
 
-        // Panel Row Update
-        printf("\n\nPanel Row K=%d\n\n",K);
-        for(int J=0;J<V;J+=BLOCK)
-        {
-            if(J!=K) 
-            {
-                FW_BLOCK(matrix,K,J,K,BLOCK,V);
-            }
-        }
+//         // Panel Update
+//         for(register int J=0;J<v;J+=BLOCK)
+//         {
+//             if(J!=K) 
+//             {
+//                 // row
+//                 FW_BLOCK(matrix,K,J,K,BLOCK,v);
+//                 // col
+//                 FW_BLOCK(matrix,J,K,K,BLOCK,v);
+//             }
+//         }
 
-        // Panel Column Update
-        printf("\n\nPanel Column K=%d\n\n",K);
-        for(int I=0;I<V;I+=BLOCK)
-        {
-            if(I!=K) 
-            {
-                FW_BLOCK(matrix,I,K,K,BLOCK,V);
-            }
-        }
-
-        // MinPlus Outer Product
-        printf("\n\nMinPlus Outer K=%d\n\n",K);
-        for(int I=0;I<V;I+=BLOCK)
-        {
-            if (I==K) continue;
-            for(int J=0;J<V;J+=BLOCK)
-            {
-                if(J!=K) 
-                {
-                    FW_BLOCK(matrix,I,J,K,BLOCK,V);
-                }
-            }
-        }
-    }
-}
+//         // MinPlus Outer Product
+//         for(register int I=0;I<v;I+=BLOCK)
+//         {
+//             if (I==K) continue;
+//             for(register int J=0;J<v;J+=BLOCK)
+//             {
+//                 if(J!=K) 
+//                 {
+//                     FW_BLOCK(matrix,I,J,K,BLOCK,v);
+//                 }
+//             }
+//         }
+//     }
+// }
