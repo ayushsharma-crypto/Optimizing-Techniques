@@ -169,13 +169,81 @@ void floyd_v2(int * matrix, int V)
 //         for(ii=I;ii<FH;++ii)
 //         {
 //             register int aik = (*(matrix + ( V*(ii) ) + ( kk )));
-//             for(jj=J;jj<FW;++jj)
+//             for(jj=J;jj+15<FW;jj+=16)
+//             {
+//                 register int bkj = (*(matrix + ( V*( kk ) ) + ( jj + 0 )));
+//                 register int * mm = (matrix + ( V*( ii ) ) + ( jj + 0 ));
+//                 if( aik+bkj < (*(mm)) ) (*(mm))= aik + bkj;
+            
+//                 bkj = (*(matrix + ( V*( kk ) ) + ( jj + 1 )));
+//                 mm = (matrix + ( V*( ii ) ) + ( jj + 1 ));
+//                 if( aik+bkj < (*(mm)) ) (*(mm))= aik + bkj;
+            
+//                 bkj = (*(matrix + ( V*( kk ) ) + ( jj + 2 )));
+//                 mm = (matrix + ( V*( ii ) ) + ( jj + 2 ));
+//                 if( aik+bkj < (*(mm)) ) (*(mm))= aik + bkj;
+            
+//                 bkj = (*(matrix + ( V*( kk ) ) + ( jj + 3 )));
+//                 mm = (matrix + ( V*( ii ) ) + ( jj + 3 ));
+//                 if( aik+bkj < (*(mm)) ) (*(mm))= aik + bkj;
+            
+//                 bkj = (*(matrix + ( V*( kk ) ) + ( jj + 4 )));
+//                 mm = (matrix + ( V*( ii ) ) + ( jj + 4 ));
+//                 if( aik+bkj < (*(mm)) ) (*(mm))= aik + bkj;
+            
+//                 bkj = (*(matrix + ( V*( kk ) ) + ( jj + 5 )));
+//                 mm = (matrix + ( V*( ii ) ) + ( jj + 5 ));
+//                 if( aik+bkj < (*(mm)) ) (*(mm))= aik + bkj;
+            
+//                 bkj = (*(matrix + ( V*( kk ) ) + ( jj + 6 )));
+//                 mm = (matrix + ( V*( ii ) ) + ( jj + 6 ));
+//                 if( aik+bkj < (*(mm)) ) (*(mm))= aik + bkj;
+            
+//                 bkj = (*(matrix + ( V*( kk ) ) + ( jj + 7 )));
+//                 mm = (matrix + ( V*( ii ) ) + ( jj + 7 ));
+//                 if( aik+bkj < (*(mm)) ) (*(mm))= aik + bkj;
+            
+//                 bkj = (*(matrix + ( V*( kk ) ) + ( jj + 8 )));
+//                 mm = (matrix + ( V*( ii ) ) + ( jj + 8 ));
+//                 if( aik+bkj < (*(mm)) ) (*(mm))= aik + bkj;
+            
+//                 bkj = (*(matrix + ( V*( kk ) ) + ( jj + 9 )));
+//                 mm = (matrix + ( V*( ii ) ) + ( jj + 9 ));
+//                 if( aik+bkj < (*(mm)) ) (*(mm))= aik + bkj;
+            
+//                 bkj = (*(matrix + ( V*( kk ) ) + ( jj + 10 )));
+//                 mm = (matrix + ( V*( ii ) ) + ( jj + 10 ));
+//                 if( aik+bkj < (*(mm)) ) (*(mm))= aik + bkj;
+            
+//                 bkj = (*(matrix + ( V*( kk ) ) + ( jj + 11 )));
+//                 mm = (matrix + ( V*( ii ) ) + ( jj + 11 ));
+//                 if( aik+bkj < (*(mm)) ) (*(mm))= aik + bkj;
+            
+//                 bkj = (*(matrix + ( V*( kk ) ) + ( jj + 12 )));
+//                 mm = (matrix + ( V*( ii ) ) + ( jj + 12 ));
+//                 if( aik+bkj < (*(mm)) ) (*(mm))= aik + bkj;
+            
+//                 bkj = (*(matrix + ( V*( kk ) ) + ( jj + 13 )));
+//                 mm = (matrix + ( V*( ii ) ) + ( jj + 13 ));
+//                 if( aik+bkj < (*(mm)) ) (*(mm))= aik + bkj;
+            
+//                 bkj = (*(matrix + ( V*( kk ) ) + ( jj + 14 )));
+//                 mm = (matrix + ( V*( ii ) ) + ( jj + 14 ));
+//                 if( aik+bkj < (*(mm)) ) (*(mm))= aik + bkj;
+            
+//                 bkj = (*(matrix + ( V*( kk ) ) + ( jj + 15 )));
+//                 mm = (matrix + ( V*( ii ) ) + ( jj + 15 ));
+//                 if( aik+bkj < (*(mm)) ) (*(mm))= aik + bkj;
+//             }
+//             while (jj<FW)
 //             {
 //                 register int bkj = (*(matrix + ( V*( kk ) ) + ( jj )));
 //                 register int * mm = (matrix + ( V*( ii ) ) + ( jj ));
 //                 if( aik+bkj < (*(mm)) )
 //                     (*(mm))= aik + bkj;
+//                 jj++;
 //             }
+            
 //         }
 //     }
 // }
