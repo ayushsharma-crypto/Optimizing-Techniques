@@ -93,8 +93,10 @@ void get_matrix(Matrix * mat, int r, int c )
 void transpose_matrix(Matrix * mat)
 {
     register long long int r,c,a,b;
-    for(r = 0; r < DEFAULT_ROW; ++r){
-        for(c = 0; c < r; ++c){
+    for(r = 0; r < DEFAULT_ROW; ++r)
+    {
+        for(c = 0; c < r; ++c)
+        {
             a = mat->matrix[r][c];
             b = mat->matrix[c][r];
             mat->matrix[r][c] = b;
